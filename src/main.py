@@ -7,6 +7,7 @@ from stable_baselines3 import DQN, PPO
 
 def train_DQN(env, policy, total_steps, learning_starts):
     model = DQN(policy=policy, env=env, learning_starts=learning_starts)
+    model.set_parameters()
     model.learn(total_timesteps=total_steps)
     model.save('model/dqn_wtf')
 
@@ -25,24 +26,21 @@ if __name__ == '__main__':
 
     parser.add_argument('-t', '--train', action='store_true')
     parser.add_argument('-p', '--test', action='store_true')
-    parser.add_argument('-m', '--model', default='dqn')
+    parser.add_argument('-d', '--dqn', action='store_true')
+    parser.add_argument('-pp', '--ppo', action='store_true')
     args = parser.parse_args()
-
+    if args.train:
+        env = gym.make('MountainCar-v0')
+        if args.dqn:
+            train_DQN(env, 'MlpPolicy', total_steps=50000, learning_starts=1)
+        elif args.ppo:
+            train_PPO(env, 'MlpPolicy', total_steps=50000, learning_starts=1)
     env = gym.make('MountainCar-v0', render_mode='human')
-    model = DQN.load('model/dqn_wtf')
-    # model.learn(total_timesteps=50000)
-    # model.save('model/dqn_wtf')
+    if args.dqn:
+        model = DQN.load('model/dqn_wtf')
+    elif args.ppo:
+        model = PPO.load('model/ppo_wtf')
     num_games = 20
-    # if args['train']:
-    #     if args['model'] == 'dqn':
-    #         train_DQN(env, 'MlpPolicy', 50000, 1)
-    #     if args['model'] == 'ppo':
-    #         train_PPO(env, 'MlpPolicy', 50000, 1)
-    # if args['model'] == 'dqn':
-    #     model = DQN.load('model/dqn_wtf')
-
-    # if args['model'] == 'ppo':
-    #     model = DQN.load('model/ppo_wtf')
 
     for i in range(num_games):
         obs, info = env.reset()
