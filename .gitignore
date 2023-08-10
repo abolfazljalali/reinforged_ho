@@ -6,6 +6,10 @@ __pycache__/
 
 # My additions
 model/
+images/
+Archive.zip
+data.csv
+reqs.txt
 
 # C extensions
 *.so
